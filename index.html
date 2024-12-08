@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login com Google</title>
+  <style>
+    /* Adicionando estilo básico */
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background-color: #f4f4f4;
+    }
+
+    .container {
+      text-align: center;
+    }
+
+    button {
+      padding: 10px 20px;
+      background-color: #4285F4;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #357ae8;
+    }
+
+    #user-info {
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h1>Login com Google</h1>
+    <button id="googleLogin">Login com Google</button>
+
+    <div id="user-info" style="display: none;">
+      <h2>Informações do Usuário</h2>
+      <p id="user-name"></p>
+      <p id="user-email"></p>
+      <img id="user-pic" alt="User Pic" width="100">
+      <button id="logout">Logout</button>
+    </div>
+  </div>
+
+  <!-- Firebase Scripts -->
+  <script type="module">
+    // Importando funções do Firebase versão modular
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.6.8/firebase-app.js';
+    import { getAuth, signInWithPopup, GoogleAuthProvider, signOut } from 'https://www.gstatic.com/firebasejs/9.6.8/firebase-auth.js';
+
+    // Configuração do Firebase
+    const firebaseConfig = {
+      apiKey: "AIzaSyDYnSC_2lsclL-xgKg13Z3IUOlNViKZIzw",
+      authDomain: "login-92ee4.firebaseapp.com",
+      projectId: "login-92ee4",
+      storageBucket: "login-92ee4.appspot.com",
+      messagingSenderId: "1059378648762",
+      appId: "1:1059378648762:web:8baf190f17438efb88d483"
+    };
+
+    // Inicializando Firebase
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth();
+
+    // Referenciando elementos do HTML
+    const googleLoginBtn = document.getElementById('googleLogin');
+    const userInfo = document.getElementById('user-info');
+    const userName = document.getElementById('user-name');
+    const userEmail = document.getElementById('user-email');
+    const userPic = document.getElementById('user-pic');
+    const logoutBtn = document.getElementById('logout');
+
+    // Função de Login com Google
+    googleLoginBtn.addEventListener('click', async () => {
+      const provider = new GoogleAuthProvider();
+
+      try {
+        const result = await signInWithPopup(auth, provider);
+        const user = result.user;
+        userInfo.style.display = 'block';
+        userName.innerText = `Nome: ${user.displayName}`;
+        userEmail.innerText = `Email: ${user.email}`;
+        userPic.src = user.photoURL;
+        googleLoginBtn.style.display = 'none';
+      } catch (error) {
+        console.error(error);
+      }
+    });
+
+    // Função de Logout
+    logoutBtn.addEventListener('click', async () => {
+      try {
+        await signOut(auth);
+        userInfo.style.display = 'none';
+        googleLoginBtn.style.display = 'block';
+      } catch (error) {
+        console.error(error);
+      }
+    });
+  </script>
+
+</body>
+</html>
